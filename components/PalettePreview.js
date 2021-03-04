@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import {
   Text,
   View,
@@ -51,4 +51,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PalettePreview;
+export default memo(PalettePreview);

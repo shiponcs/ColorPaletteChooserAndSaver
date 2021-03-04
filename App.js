@@ -4,30 +4,48 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Home from './screens/Home';
 import ColorPalette from './screens/ColorPallete';
+import AddNewPaletteModal from './screens/AddNewPaletteModal';
 import Palette from './screens/Palette';
 
-const Stack = createStackNavigator();
+const RootStack = createStackNavigator();
+const MainStack = createStackNavigator();
+
+const MainScreen = () => {
+  return (
+    <MainStack.Navigator>
+      <MainStack.Screen
+        name="Home"
+        component={Home}
+        options={{ title: 'Main Window' }}
+      />
+      <MainStack.Screen
+        name="ColorPalette"
+        component={ColorPalette}
+        options={({ route }) => ({ title: route.params.name })}
+      />
+      <MainStack.Screen
+        name="Palette"
+        component={Palette}
+        options={({ route }) => ({ title: route.params.name })}
+      />
+    </MainStack.Navigator>
+  );
+};
 
 const App = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Home"
-          component={Home}
-          options={{ title: 'Main Window' }}
+      <RootStack.Navigator mode="modal">
+        <RootStack.Screen
+          name="Main"
+          component={MainScreen}
+          options={{ headerShown: false }}
         />
-        <Stack.Screen
-          name="ColorPalette"
-          component={ColorPalette}
-          options={({ route }) => ({ title: route.params.name })}
+        <RootStack.Screen
+          name="AddNewPaletteModal"
+          component={AddNewPaletteModal}
         />
-        <Stack.Screen
-          name="Palette"
-          component={Palette}
-          options={({ route }) => ({ title: route.params.name })}
-        />
-      </Stack.Navigator>
+      </RootStack.Navigator>
     </NavigationContainer>
   );
 };

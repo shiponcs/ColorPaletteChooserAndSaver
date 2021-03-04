@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   View,
   Text,
-  TouchableOpacity,
+  Button,
   StyleSheet,
   FlatList,
+  TouchableHighlight,
+  SafeAreaView,
 } from 'react-native';
 import PalettePreview from '../components/PalettePreview';
 
@@ -49,25 +51,74 @@ const colorPalettes = [
   { paletteName: 'Frontend Masters', colors: FRONTEND_MASTERS, key: '3' },
 ];
 
-const Home = ({ navigation }) => {
+const Home = ({ navigation, route }) => {
+  const [colorPalettesRemote, setColorPaletteRemote] = useState([]);
+  const [isFetching, setIsFetchinng] = useState(true);
+
+  const handleFetchColorPalette = useCallback(async () => {
+    setIsFetchinng(true);
+    const result = await fetch(
+      'https://color-palette-api.kadikraman.now.sh/palettes',
+    );
+    if (result.ok) {
+      const colorPalettesResult = await result.json();
+
+      setIsFetchinng(false);
+      setColorPaletteRemote(colorPalettesResult);
+    }
+  }, []);
+
+  const handleRefreshing = useCallback(async () => {
+    setIsFetchinng(true);
+    await handleFetchColorPalette();
+    setIsFetchinng(false);
+  }, []);
+
+  useEffect(() => {
+    handleFetchColorPalette();
+  }, []);
+
+  useEffect(() => {
+    if (route.params?.paletteName)
+      setColorPaletteRemote((prev) => {
+        return [
+          {
+            paletteName: route.params.paletteName,
+            colors: route.params.colors,
+          },
+          ...prev,
+        ];
+      });
+  }, [route.params?.paletteName]);
+
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <FlatList
-        data={colorPalettes}
+        data={colorPalettesRemote}
+        keyExtractor={({ paletteName }) => paletteName}
         renderItem={({ item }) => (
           <PalettePreview
             handlePress={() => navigation.navigate('ColorPalette', item)}
             item={item}
           />
         )}
+        refreshing={isFetching}
+        onRefresh={handleRefreshing}
+        ListHeaderComponent={
+          <TouchableHighlight
+            onPress={() => navigation.navigate('AddNewPaletteModal')}>
+            <Text style={styles.addColor}>Add new Palette</Text>
+          </TouchableHighlight>
+        }
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 10,
+    marginBottom: 50,
   },
   touchable: {
     marginTop: 10,
