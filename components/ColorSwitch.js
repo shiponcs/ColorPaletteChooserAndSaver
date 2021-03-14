@@ -1,29 +1,39 @@
 import React, { memo, useState } from 'react';
-import { View, Switch, Text } from 'react-native';
+import { View, Switch, Text, StyleSheet } from 'react-native';
 
 const ColorSwitch = ({ item, handleSelectedColorsUpdate }) => {
   const [isSelected, setIsSelected] = useState(false);
   const { colorName, hexCode } = item;
 
-  const handleValueChange = () => {
-    setIsSelected((prev) => {
-      if (!prev) {
-        // means the color is to be pushed
-        handleSelectedColorsUpdate({ item, isToBePushed: true });
-      } else {
-        // undo the push
-        handleSelectedColorsUpdate({ item, isToBePushed: false });
-      }
-      return !prev;
-    });
+  const handleValueChange = (changedValue) => {
+    handleSelectedColorsUpdate({ item, isToBePushed: changedValue });
+    setIsSelected(changedValue);
   };
 
   return (
-    <View>
-      <Text>{colorName}</Text>
-      <Switch value={isSelected} onValueChange={handleValueChange} />
+    <View style={styles.colorSwitch}>
+      <Text style={styles.text}>{colorName}</Text>
+      <Switch
+        thumbColor={hexCode}
+        trackColor={'black'}
+        value={isSelected}
+        onValueChange={handleValueChange}
+      />
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  colorSwitch: {
+    borderBottomWidth: 1,
+    borderBottomColor: 'gray',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+  },
+  text: {
+    fontSize: 15,
+  },
+});
 
 export default memo(ColorSwitch);

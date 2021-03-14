@@ -55,7 +55,7 @@ const AddNewPaletteModal = ({ navigation }) => {
 
   return (
     <View style={styles.modalContainer}>
-      <Text style={styles.modalTitle}>Add a new Color Palette</Text>
+      <Text style={styles.modalTitle}>Color Palette Name</Text>
       <TextInput
         style={styles.textInput}
         onChangeText={setPaletteName}
@@ -85,8 +85,8 @@ const styles = StyleSheet.create({
     marginBottom: 120,
   },
   modalTitle: {
-    fontWeight: 'bold',
-    fontSize: 18,
+    fontSize: 15,
+    paddingBottom: 5,
   },
   textInput: {
     borderColor: 'gray',
